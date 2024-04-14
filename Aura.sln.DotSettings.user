@@ -1,0 +1,7 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=05507991_002D1074_002D4e91_002Daf58_002Df2171b806ea7/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;Solution /&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=7f46cd20_002D842d_002D4d25_002Dbe02_002D94dad232fb23/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="All tests from AuraAttributeSet.cpp" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;ProjectFile&gt;ECD8D8C5-1A7C-3B7B-A7F2-E5AB848E9776/dl:Source:..?..?Source/d:Aura/d:Private/d:AbilitySystem/f:AuraAttributeSet.cpp&lt;/ProjectFile&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
