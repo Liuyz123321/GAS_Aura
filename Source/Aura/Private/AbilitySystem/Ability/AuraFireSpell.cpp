@@ -44,7 +44,7 @@ void UAuraFireSpell::SpawnProjectile(const FVector& MouseLocation)
 				AbilitySystemComponent->MakeOutgoingSpec(DamageEffect,GetAbilityLevel(),AbilitySystemComponent->MakeEffectContext());
 			Projectile->GameplayEffectSpecHandle = GameplayEffectSpecHandle;
 			const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
-			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GameplayEffectSpecHandle,GameplayTags.Damage,50.f);
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GameplayEffectSpecHandle,GameplayTags.Damage,20.f);
 		}
 		
 		Projectile->FinishSpawning(Transform);

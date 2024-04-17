@@ -3,11 +3,15 @@
 
 #include "AbilitySystem/ExecutionCal/ExecutionCal_Damage.h"
 
-#include "Engine/SpecularProfile.h"
+#include "AttributesTagsInfo.h"
 
 UExecutionCal_Damage::UExecutionCal_Damage()
 {
 	RelevantAttributesToCapture.Add(GetAuraDamage().ArmorDef);
+	RelevantAttributesToCapture.Add(GetAuraDamage().BlockChanceDef);
+	RelevantAttributesToCapture.Add(GetAuraDamage().ArmorPenetrationDef);
+	RelevantAttributesToCapture.Add(GetAuraDamage().CriticalHitChanceDef);
+	RelevantAttributesToCapture.Add(GetAuraDamage().CriticalHitDamageDef);
 }
 
 void UExecutionCal_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -27,8 +31,47 @@ void UExecutionCal_Damage::Execute_Implementation(const FGameplayEffectCustomExe
 	AggregatorEvaluateParameters.SourceTags = SourceTags;
 	AggregatorEvaluateParameters.TargetTags = TargetTags;
 
-	float Armor = 0.f;
-	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetAuraDamage().ArmorDef,AggregatorEvaluateParameters,Armor);
-	Armor = FMath::Max(0,Armor);
+	FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+	float Damage = GameplayEffectSpec.GetSetByCallerMagnitude(GameplayTags.Damage);
+	float BlockChance = 0.f;
+	float TargetArmor = 0.f;
+	float SourceArmorPenetration = 0.f;
+	float SourceCriticalHitChance = 0.f;
+	float SourceCriticalHitDamage = 0.f;
 	
+	// EXAMPLE::
+	// ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetAuraDamage().ArmorDef,AggregatorEvaluateParameters,Armor);
+	// Armor = FMath::Max(0,Armor);
+	
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetAuraDamage().BlockChanceDef,AggregatorEvaluateParameters,BlockChance);
+	BlockChance = FMath::Max<float>(0.f,BlockChance);
+
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetAuraDamage().ArmorDef,AggregatorEvaluateParameters,TargetArmor);
+	BlockChance = FMath::Max<float>(0.f,TargetArmor);
+
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetAuraDamage().ArmorPenetrationDef,AggregatorEvaluateParameters,SourceArmorPenetration);
+	BlockChance = FMath::Max<float>(0.f,SourceArmorPenetration);
+
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetAuraDamage().CriticalHitChanceDef,AggregatorEvaluateParameters,SourceCriticalHitChance);
+	BlockChance = FMath::Max<float>(0.f,SourceArmorPenetration);
+
+	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(GetAuraDamage().CriticalHitDamageDef,AggregatorEvaluateParameters,SourceCriticalHitDamage);
+	BlockChance = FMath::Max<float>(0.f,SourceArmorPenetration);
+	
+	if(FMath::RandRange(0,100) < BlockChance)
+	{
+		Damage /= 2.f;
+		UE_LOG(LogTemp,Warning,TEXT("Damage Blocked!"));
+	}
+
+	float EffectiveArmor = TargetArmor * (100 - SourceArmorPenetration * 0.25) / 100.f;   //0.25 表示 4 点 ArmorPenetration 能减 1% 防。
+	Damage *= (100 - EffectiveArmor * 0.333) / 100.f;                                     //0.33 表示 3 点有效防御力（减防后的防御力） 能免 1% 的伤。
+
+	if(FMath::RandRange(0,100) < SourceCriticalHitChance)
+	{
+		Damage *= (2.f + (SourceCriticalHitDamage)/100.f);
+	}
+	
+	FGameplayModifierEvaluatedData ModifierEvaluatedData(UAuraAttributeSet::GetDamageAttribute(),EGameplayModOp::Additive,Damage);
+	OutExecutionOutput.AddOutputModifier(ModifierEvaluatedData);
 }
