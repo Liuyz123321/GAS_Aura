@@ -60,7 +60,7 @@ void UExecutionCal_Damage::Execute_Implementation(const FGameplayEffectCustomExe
 	
 	if(FMath::RandRange(0,100) < BlockChance)
 	{
-		Damage /= 2.f;
+		Damage  = 0;
 		UE_LOG(LogTemp,Warning,TEXT("Damage Blocked!"));
 	}
 

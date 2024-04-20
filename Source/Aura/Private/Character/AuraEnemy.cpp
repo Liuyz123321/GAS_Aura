@@ -4,9 +4,11 @@
 #include "Character/AuraEnemy.h"
 
 #include "AttributesTagsInfo.h"
-#include "ShaderPrintParameters.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "AI/AuraAIController.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -22,6 +24,18 @@ AAuraEnemy::AAuraEnemy()
 
 	HealthBar = CreateDefaultSubobject<UWidgetComponent>("HealthBar");
 	HealthBar->SetupAttachment(GetRootComponent());
+}
+
+void AAuraEnemy::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if(!HasAuthority()) return;
+	EnemyAIController = Cast<AAuraAIController>(NewController);
+	EnemyAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
+	EnemyAIController->RunBehaviorTree(BehaviorTree);
+	EnemyAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsHitReacting"),false);
+	EnemyAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsRangeAttack"),EnemyType != EEnemyType::Warrior);
 }
 
 void AAuraEnemy::Highlight()
@@ -47,7 +61,8 @@ int32 AAuraEnemy::getLevel()
 void AAuraEnemy::OnTagAdd(const FGameplayTag GameplayTag, int32 NewCount)
 {
 	bHitReact = NewCount > 0;
-	GetCharacterMovement()->MaxWalkSpeed = bHitReact?0:BaseWalkSpeed;
+	GetCharacterMovement()->MaxWalkSpeed = bHitReact? 0:BaseWalkSpeed;
+	EnemyAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsHitReacting"),bHitReact);
 }
 
 void AAuraEnemy::Die()

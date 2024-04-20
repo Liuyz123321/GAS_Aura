@@ -7,11 +7,21 @@
 #include "Interaction/EnemyInterface.h"
 #include "AuraEnemy.generated.h"
 
+class AAuraAIController;
+class UBehaviorTree;
 struct FGameplayTag;
 class UWidgetComponent;
 /**
  * 
  */
+
+UENUM()
+enum class EEnemyType
+{
+	Ranger,
+	Warrior,
+	Elementalist
+};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthBarChangedSignature,float, NewData);
 
@@ -22,6 +32,8 @@ class AURA_API AAuraEnemy : public AACharacter, public IEnemyInterface
 
 public:
 	AAuraEnemy();
+
+	virtual void PossessedBy(AController* NewController) override;
 
 	/** begin EnemyInterface*/
 	virtual void Highlight() override;
@@ -38,6 +50,8 @@ public:
 	
 	UPROPERTY(BlueprintReadOnly)
 	float BaseWalkSpeed = 250.f;
+
+	
 protected:
 	virtual void BeginPlay() override;
 
@@ -49,9 +63,17 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly,Category="Character Class Default");
 	int32 level = 1;
 
+	UPROPERTY(EditAnywhere,Category="AI")
+	TObjectPtr<UBehaviorTree>  BehaviorTree;
+
+	UPROPERTY()
+	TObjectPtr<AAuraAIController> EnemyAIController;
+
 	UPROPERTY(BlueprintAssignable)
 	FOnHealthBarChangedSignature ChangeEnemyProgressBar;
 
+	UPROPERTY(EditAnywhere)
+	EEnemyType EnemyType;
 private:
 	virtual void InitASinfo() override;
 };
