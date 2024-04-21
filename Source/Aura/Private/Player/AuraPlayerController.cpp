@@ -66,7 +66,7 @@ void AAuraPlayerController::CursorTrace()
 	
 }
 
-void AAuraPlayerController::SpawnDamageText(float InComingDamage, ACharacter* TargetCharacter)
+void AAuraPlayerController::SpawnDamageText(float InComingDamage, ACharacter* TargetCharacter, bool bCritic, bool bBlock)
 {
 	if(IsValid(TargetCharacter) && DamageTextCompClass)
 	{
@@ -74,7 +74,7 @@ void AAuraPlayerController::SpawnDamageText(float InComingDamage, ACharacter* Ta
 		DamageTextComponent->RegisterComponent();
 		DamageTextComponent->AttachToComponent(TargetCharacter->GetRootComponent(),FAttachmentTransformRules::KeepRelativeTransform);
 		DamageTextComponent->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-		DamageTextComponent->SetDamageText(InComingDamage);
+		DamageTextComponent->SetDamageText(InComingDamage,bCritic,bBlock);
 	}
 }
 

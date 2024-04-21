@@ -1,6 +1,9 @@
 
 
 #include "Character\AuraCharacterBase.h"
+
+#include "AttributesTagsInfo.h"
+#include "ShaderPrintParameters.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Aura/Aura.h"
@@ -30,15 +33,46 @@ UAttributeSet* AACharacter::GetAtrribueSet()
 	return AttributeSet;
 }
 
-FVector AACharacter::GetWeaponTipSocketLocation()
+FVector AACharacter::GetWeaponTipSocketLocation_Implementation(const FGameplayTag& GameplayTag)
 {
-	check(weapon);
-	return weapon->GetSocketLocation(WeaponTipSocketName);
+	const FAuraGameplayTags AuraGameplayTags = FAuraGameplayTags::Get();
+	if(GameplayTag.MatchesTagExact(AuraGameplayTags.Montage_Attack_Weapon) && IsValid(weapon))
+	{
+		return weapon->GetSocketLocation(WeaponTipSocketName);
+	}
+	
+	if(GameplayTag.MatchesTagExact(AuraGameplayTags.Montage_Attack_LeftHand))
+	{
+		return GetMesh()->GetSocketLocation(LeftHandSocketName);
+	}
+	
+	if(GameplayTag.MatchesTagExact(AuraGameplayTags.Montage_Attack_RightHand))
+	{
+		return GetMesh()->GetSocketLocation(RightHandSocketName);
+	}
+
+	return FVector();
 }
 
-UAnimMontage* AACharacter::GetAnimMontage_Implementation()
+
+UAnimMontage* AACharacter::GetHitReactAnimMontage_Implementation()
 {
 	return HitReactMontage;
+}
+
+TArray<FMontageTag> AACharacter::GetMontageTags_Implementation()
+{
+	return MontageTags;
+}
+
+bool AACharacter::IsDead_Implementation()
+{
+	return bIsDead;
+}
+
+AActor* AACharacter::GetAvatar_Implementation()
+{
+	return this;
 }
 
 void AACharacter::Die()
@@ -62,6 +96,8 @@ void AACharacter::Die()
 	GetMesh()->SetCollisionResponseToChannel(ECC_WorldStatic,ECR_Block);
 
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	bIsDead = true;
 }
 
 

@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "ShaderPrintParameters.h"
 #include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "Aura/Aura.h"
 #include "Components/AudioComponent.h"
@@ -41,6 +42,16 @@ AAuraProjectile::AAuraProjectile()
 	ProjectileMovementComponent->ProjectileGravityScale = 0.f;
 }
 
+void AAuraProjectile::SetSpawnActor(AActor* Actor)
+{
+	SpawnActor = Actor;
+}
+
+AActor* AAuraProjectile::GetSpawnActor() const
+{
+	return SpawnActor;
+}
+
 void AAuraProjectile::BeginPlay()
 {
 	Super::BeginPlay();
@@ -52,10 +63,12 @@ void AAuraProjectile::BeginPlay()
 void AAuraProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& FHitResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation(),FRotator::ZeroRotator);
+	if(OtherActor == SpawnActor) return;
+	
+ 	UGameplayStatics::PlaySoundAtLocation(this,ImpactSound,GetActorLocation(),FRotator::ZeroRotator);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(this,ImpactEffect,GetActorLocation());
-
-	AudioComponent->Stop();
+	if(IsValid(AudioComponent))
+		AudioComponent->Stop();
 
 	if(HasAuthority())
 	{

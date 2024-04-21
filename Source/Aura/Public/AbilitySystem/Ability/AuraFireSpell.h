@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Ability/AuraGameplayAbility.h"
+#include "AuraAttackAbility.h"
 #include "AuraFireSpell.generated.h"
 
 class AAuraProjectile;
@@ -11,7 +12,7 @@ class AAuraProjectile;
  * 
  */
 UCLASS()
-class AURA_API UAuraFireSpell : public UAuraGameplayAbility
+class AURA_API UAuraFireSpell : public UAuraAttackAbility
 {
 	GENERATED_BODY()
 
@@ -20,13 +21,11 @@ public:
 		const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnProjectile(const FVector& MouseLocation);
+	void SpawnProjectile(const FVector& MouseLocation, const FGameplayTag& SocketTag);
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<AAuraProjectile> ProjectileClass;
-
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TSubclassOf<UGameplayEffect> DamageEffect;
+	
 	
 };

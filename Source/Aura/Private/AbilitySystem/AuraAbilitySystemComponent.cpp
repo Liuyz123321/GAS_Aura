@@ -57,6 +57,16 @@ void UAuraAbilitySystemComponent::AddAbilities(const TArray<TSubclassOf<UGamepla
 	}
 }
 
+void UAuraAbilitySystemComponent::AddAbility(const TSubclassOf<UGameplayAbility>& StartUpAbility, int level)
+{
+	FGameplayAbilitySpec GameplayAbilitySpec(StartUpAbility,level);
+	if(const UAuraGameplayAbility* GameplayAbility = Cast<UAuraGameplayAbility>(GameplayAbilitySpec.Ability))
+	{
+		GameplayAbilitySpec.DynamicAbilityTags.AddTag(GameplayAbility->StartUpTag);
+		GiveAbility(GameplayAbilitySpec);
+	}
+}
+
 void UAuraAbilitySystemComponent::EffectApplied(UAbilitySystemComponent* AbilitySystemComponent,
                                                 const FGameplayEffectSpec& GameplayEffectSpec, FActiveGameplayEffectHandle ActiveGameplayEffectHandle)
 {

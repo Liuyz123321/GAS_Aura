@@ -4,13 +4,17 @@
 #include "Character/AuraEnemy.h"
 
 #include "AttributesTagsInfo.h"
+
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "AI/AuraAIController.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Components/WidgetComponent.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
+#include "Game/AuraGameModeBase.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AAuraEnemy::AAuraEnemy()
 {
@@ -35,7 +39,7 @@ void AAuraEnemy::PossessedBy(AController* NewController)
 	EnemyAIController->GetBlackboardComponent()->InitializeBlackboard(*BehaviorTree->BlackboardAsset);
 	EnemyAIController->RunBehaviorTree(BehaviorTree);
 	EnemyAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsHitReacting"),false);
-	EnemyAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsRangeAttack"),EnemyType != EEnemyType::Warrior);
+	EnemyAIController->GetBlackboardComponent()->SetValueAsBool(FName("IsRangeAttack"),EnemyType != ECharacterClass::Warrior);
 }
 
 void AAuraEnemy::Highlight()
@@ -58,6 +62,28 @@ int32 AAuraEnemy::getLevel()
 	return level;
 }
 
+void AAuraEnemy::InitDefaultAttributes()
+{
+	UAuraAbilitySystemLibrary::InitializeDefaultAttributes(this,EnemyType,level,AbilitySystemComponent);
+}
+
+FMontageTag AAuraEnemy::GetMeleeAttackAnimMontageAndTag_Implementation()
+{
+	int MontageTagNum = MontageTags.Num();
+	int index = FMath::RandRange(0,MontageTagNum-1);
+	return MontageTags[index];
+}
+
+AActor* AAuraEnemy::GetTargetActor_Implementation() const
+{
+	return TargetActor;
+}
+
+void AAuraEnemy::SetTargetActor_Implementation(AActor* TarActor)
+{
+	TargetActor = TarActor;
+}
+
 void AAuraEnemy::OnTagAdd(const FGameplayTag GameplayTag, int32 NewCount)
 {
 	bHitReact = NewCount > 0;
@@ -70,6 +96,18 @@ void AAuraEnemy::Die()
 	SetLifeSpan(5.f);
 	Super::Die();
 	Dissolve();
+}
+
+void AAuraEnemy::AddAbilities()
+{
+	Super::AddAbilities();
+
+	UCharacterClassInfo* CharacterClassInfo = Cast<AAuraGameModeBase>(UGameplayStatics::GetGameMode(this))->CharacterClassInfo;
+	FCharacterClassDefaultInfo CharacterClassDefaultInfo = CharacterClassInfo->GetCharacterClassDefaultInfo(EnemyType);
+	for(TSubclassOf<UGameplayAbility> Ability:CharacterClassDefaultInfo.StartUpAbilities)
+	{
+		Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent)->AddAbility(Ability,level);
+	}
 }
 
 void AAuraEnemy::BeginPlay()

@@ -24,19 +24,31 @@ class AURA_API AACharacter : public ACharacter, public IAbilitySystemInterface, 
 public:
 	AACharacter();
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<USkeletalMeshComponent> weapon;
 
 	UPROPERTY(EditAnywhere)
 	FName WeaponTipSocketName;
 
+	UPROPERTY(EditAnywhere)
+	FName LeftHandSocketName;
+
+	UPROPERTY(EditAnywhere)
+	FName RightHandSocketName;
+
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	UAttributeSet* GetAtrribueSet();
+	
+	virtual FVector GetWeaponTipSocketLocation_Implementation(const FGameplayTag& GameplayTag) override;
 
-	virtual FVector GetWeaponTipSocketLocation() override;
+	virtual UAnimMontage* GetHitReactAnimMontage_Implementation() override;
 
-	virtual UAnimMontage* GetAnimMontage_Implementation() override;
+	virtual TArray<FMontageTag> GetMontageTags_Implementation() override;
+
+	virtual bool IsDead_Implementation() override;
+
+	virtual AActor* GetAvatar_Implementation() override;
 
 	virtual void Die() override;
 
@@ -47,9 +59,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void applyEffect(TSubclassOf<UGameplayEffect> effect, float level) const;
 	
-	void InitDefaultAttributes();
+	virtual void InitDefaultAttributes();
 
-	void AddAbilities();
+	virtual void AddAbilities();
 
 	virtual void Dissolve();
 
@@ -83,8 +95,13 @@ protected:
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	TObjectPtr<UMaterialInstance> WeaponDissolveMaterialInstance;
 
+	UPROPERTY(EditAnywhere)
+	TArray<FMontageTag> MontageTags;
+
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<UGameplayAbility>> StartUpAbilities;
+
+	bool bIsDead = false;
 	
 private:
 

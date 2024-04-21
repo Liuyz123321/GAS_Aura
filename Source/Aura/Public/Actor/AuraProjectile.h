@@ -24,6 +24,10 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn = true))
 	FGameplayEffectSpecHandle GameplayEffectSpecHandle;
+
+	void SetSpawnActor(AActor* Actor);
+
+	AActor* GetSpawnActor() const;
 protected:
 	virtual void BeginPlay() override;
 
@@ -36,6 +40,8 @@ protected:
 
 private:
 
+	AActor* SpawnActor;
+	
 	TObjectPtr<UAudioComponent> AudioComponent;
 		
 	UPROPERTY(EditAnywhere)

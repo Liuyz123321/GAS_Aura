@@ -41,8 +41,13 @@ public:
 
  FGameplayTag Damage;
  FGameplayTag Effect_HitReact;
+
+ FGameplayTag Ability_Attack;
  
-protected:
+ FGameplayTag Montage_Attack_Weapon;
+ FGameplayTag Montage_Attack_LeftHand;
+ FGameplayTag Montage_Attack_RightHand;
+
  
 private:
  static FAuraGameplayTags GameplayTags;

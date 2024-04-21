@@ -4,6 +4,7 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 
 #include "AttributesTagsInfo.h"
+#include "AuraAbilityTypes.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
@@ -101,7 +102,7 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		const float InComingDamage = GetDamage();
 		SetDamage(0);
-		if(InComingDamage > 0)
+		if(InComingDamage >= 0)
 		{
 			const float NewHealth = GetHealth() - InComingDamage;
 			UE_LOG(LogTemp,Warning,TEXT("[%s]'s Health becomes %f"),*props.TargetCharacter->GetName(),NewHealth)
@@ -122,9 +123,18 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 
 			if(props.SourceCharacter != props.TargetCharacter)
 			{
+				FAuraGameplayEffectContext* AuraGameplayEffectContext = static_cast<FAuraGameplayEffectContext*>(props.EffectContextHandle.Get());
+				bool IsBlock = AuraGameplayEffectContext->GetIsBlock();
+				bool IsCritic = AuraGameplayEffectContext->GetIsCriticalHit();
+				
 				if(AAuraPlayerController* PlayerController = Cast<AAuraPlayerController>(props.SourceController))
 				{
-					PlayerController->SpawnDamageText(InComingDamage,props.TargetCharacter);
+					PlayerController->SpawnDamageText(InComingDamage,props.TargetCharacter,IsCritic,IsBlock);
+					return;
+				}  
+				if(AAuraPlayerController* PlayerController = Cast<AAuraPlayerController>(props.TargetController))
+				{
+					PlayerController->SpawnDamageText(InComingDamage,props.TargetCharacter,IsCritic,IsBlock);
 				}
 			}
 		}

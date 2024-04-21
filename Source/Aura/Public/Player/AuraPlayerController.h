@@ -34,7 +34,7 @@ public:
 
 	virtual void CursorTrace();
 
-	void SpawnDamageText(float InComingDamage, ACharacter* TargetCharacter);
+	void SpawnDamageText(float InComingDamage, ACharacter* TargetCharacter, bool bCritic, bool bBlock);
 protected:
 	
 	virtual void BeginPlay() override;

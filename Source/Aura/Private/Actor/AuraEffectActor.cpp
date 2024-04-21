@@ -59,11 +59,14 @@ void AAuraEffectActor::EndOverlap(AActor* tarActor)
 			{
 				if(elemPair.Key == AbilitySystemInterface)
 				{
-					AbilitySystemComponent->RemoveActiveGameplayEffect(elemPair.Value);
+					const FActiveGameplayEffectHandle GameplayEffectHandle = elemPair.Value;
+
+					UE_LOG(LogTemp,Warning,TEXT("%s"),*GameplayEffectHandle.ToString());
+					bool res = AbilitySystemComponent->RemoveActiveGameplayEffect(GameplayEffectHandle);
 					HandlesToRemove.Add(elemPair.Key);
 				}
 			}
-			for(auto HandleElemToRemove:HandlesToRemove)
+			for(IAbilitySystemInterface* HandleElemToRemove:HandlesToRemove)
 			{
 				EffectHandleMap.FindAndRemoveChecked(HandleElemToRemove);
 			}
@@ -80,6 +83,7 @@ void AAuraEffectActor::BeginPlay()
 
 void AAuraEffectActor::ApplyEffectToTar(AActor* tarActor, TSubclassOf<UGameplayEffect> EffectClass)
 {
+	if(!bCanApplyToEnemy && tarActor->ActorHasTag(FName("Enemy"))) return;
 	IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(tarActor);
 	if(AbilitySystemInterface)
 	{
@@ -91,8 +95,11 @@ void AAuraEffectActor::ApplyEffectToTar(AActor* tarActor, TSubclassOf<UGameplayE
 
 		if(InfiniteRemovalPolicy == ERemovalEffectPolicy::EndOverlapRemove)
 		{
+			check(AbilitySystemInterface);
 			EffectHandleMap.Add(AbilitySystemInterface,ActiveGameplayEffectHandle);
 		}
+
+		if(GameplayEffectSpecHandle.Data.Get()->Def.Get()->DurationPolicy != EGameplayEffectDurationType::Infinite) Destroy();
 	}
 }
 

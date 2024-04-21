@@ -42,13 +42,15 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	UPROPERTY(EditAnywhere,Category="Enemy")
+	bool bCanApplyToEnemy = false;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Effects")
 	TSubclassOf<UGameplayEffect> InstantGameplayEffectClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Effects")
 	EApplyEffectPolicy InstantApplyPolicy = EApplyEffectPolicy::DoNotApply;
-
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Effects")
 	TSubclassOf<UGameplayEffect> DurationGameplayEffectClass;
 

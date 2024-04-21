@@ -6,6 +6,8 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+class UAbilitySystemComponent;
+enum class ECharacterClass;
 class UMenuWidgetController;
 /**
  * 
@@ -18,4 +20,21 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category= "AbilitySystem|WidgetController")
 	static UMenuWidgetController* GetAttributeMenuWidgetController(UObject* WorldContext);
+
+	static void InitializeDefaultAttributes(UObject* WorldContext,ECharacterClass CharacterClass,float level,UAbilitySystemComponent* ASC);
+
+	UFUNCTION(BlueprintCallable)
+	static void GetLivePlayersWithinRadius(UObject* WorldContext,TArray<AActor*>& OverlapActors, const TArray<AActor*>& ActorsToIgnore, float Radius, FVector SphereOrigin);
+
+	UFUNCTION(BlueprintPure)
+	static bool GetIsBlocked(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintPure)
+	static bool GetIsCriticalHit(const FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable)
+	static void SetIsBlocked(bool IsBlocked, FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable)
+	static void SetIsCriticalHit(bool IsCriticalHit, FGameplayEffectContextHandle& EffectContextHandle);
 };

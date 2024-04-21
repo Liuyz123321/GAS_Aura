@@ -8,8 +8,3 @@ int ICombatInterface::getLevel()
 {
 	return 0;
 }
-
-FVector ICombatInterface::GetWeaponTipSocketLocation()
-{
-	return FVector();
-}

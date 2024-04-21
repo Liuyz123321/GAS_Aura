@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Character/AuraCharacterBase.h"
 #include "Interaction/EnemyInterface.h"
+#include "AbilitySystem/Data/CharacterClassInfo.h"
 #include "AuraEnemy.generated.h"
 
 class AAuraAIController;
@@ -14,14 +15,6 @@ class UWidgetComponent;
 /**
  * 
  */
-
-UENUM()
-enum class EEnemyType
-{
-	Ranger,
-	Warrior,
-	Elementalist
-};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthBarChangedSignature,float, NewData);
 
@@ -37,14 +30,25 @@ public:
 
 	/** begin EnemyInterface*/
 	virtual void Highlight() override;
+	
 	virtual void unHighlight() override;
 	/** end EnemyInterface*/
 
 	virtual int32 getLevel() override;
 
+	virtual void InitDefaultAttributes() override;
+
+	virtual FMontageTag GetMeleeAttackAnimMontageAndTag_Implementation() override;
+
+	virtual AActor* GetTargetActor_Implementation() const override;
+
+	virtual void SetTargetActor_Implementation(AActor* TarActor) override;
+
 	void OnTagAdd(const FGameplayTag GameplayTag,int32 NewCount);
 
 	virtual void Die() override;
+
+	virtual void AddAbilities() override;
 
 	bool bHitReact = false;
 	
@@ -55,7 +59,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void Dissolve() override;
+	virtual void Dissolve() override; 
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UWidgetComponent> HealthBar;
@@ -73,7 +77,11 @@ protected:
 	FOnHealthBarChangedSignature ChangeEnemyProgressBar;
 
 	UPROPERTY(EditAnywhere)
-	EEnemyType EnemyType;
+	ECharacterClass EnemyType;
+
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<AActor> TargetActor;
+
 private:
 	virtual void InitASinfo() override;
 };
