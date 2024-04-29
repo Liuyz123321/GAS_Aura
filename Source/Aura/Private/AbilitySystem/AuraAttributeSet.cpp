@@ -2,12 +2,13 @@
 
 
 #include "AbilitySystem/AuraAttributeSet.h"
-
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AttributesTagsInfo.h"
 #include "AuraAbilityTypes.h"
 #include "GameplayEffectExtension.h"
 #include "GameFramework/Character.h"
 #include "Interaction/CombatInterface.h"
+#include "Interaction/PlayerInterface.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/AuraPlayerController.h"
 
@@ -93,7 +94,6 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	if(Data.EvaluatedData.Attribute == GetManaAttribute())
 	{
 		SetMana(FMath::Clamp(GetMana(),0.f,GetMaxMana()));
-		UE_LOG(LogTemp,Warning,TEXT("Changed Health on %s, Health: %f "),*props.TargetCharacter->GetName(),GetHealth())
 	}
 
 	
@@ -119,6 +119,8 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			{
 				ICombatInterface* CombatInterface = Cast<ICombatInterface>(props.TargetAvatarActor);
 				CombatInterface->Die();
+
+				SendGainXPEvent(props);
 			}
 
 			if(props.SourceCharacter != props.TargetCharacter)
@@ -139,11 +141,53 @@ void UAuraAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			}
 		}
 	}
+	if(Data.EvaluatedData.Attribute == GetInComingXPAttribute())
+	{
+		const float LocalInComingXP = GetInComingXP();
+		SetInComingXP(0.f);
 
+		
+		if(props.SourceCharacter->Implements<UPlayerInterface>())
+		{
+			const int CurLevel = IPlayerInterface::Execute_GetPlayerLevel(props.SourceCharacter);
+			const int CurXP = IPlayerInterface::Execute_GetXP(props.SourceCharacter);
 
+			const int NewLevel = IPlayerInterface::Execute_GetLevelForXP(props.SourceCharacter,CurXP+LocalInComingXP);
+
+			if(NewLevel > CurLevel)
+			{
+				int AttributePointAward = 0;
+				int SpellPointAward = 0;
+
+				for(int i = CurLevel + 1; i <= NewLevel; i++)
+				{
+					AttributePointAward += IPlayerInterface::Execute_GetAttributeAwardForLevel(props.SourceCharacter,i);
+					SpellPointAward += IPlayerInterface::Execute_GetSpellAwardForLevel(props.SourceCharacter,i);
+				}
+
+				IPlayerInterface::Execute_AddAttributeAward(props.SourceCharacter,AttributePointAward);
+				IPlayerInterface::Execute_AddSpellAward(props.SourceCharacter,SpellPointAward);
+
+				IPlayerInterface::Execute_LevelUp(props.SourceCharacter,NewLevel);
+
+				SetHealth(GetMaxHealth());
+				SetMana(GetMaxMana());
+			}
+
+			IPlayerInterface::Execute_AddXp(props.SourceCharacter,LocalInComingXP);
+		}
+	}
 	
 }
 
+void UAuraAttributeSet::SendGainXPEvent(const FEffectProperties& EffectProperties)
+{
+	FGameplayEventData PayLoad;
+	PayLoad.EventTag = FAuraGameplayTags::Get().Attribute_Meta_InComingXP;
+	PayLoad.EventMagnitude = 100;
+	
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(EffectProperties.SourceAvatarActor,FAuraGameplayTags::Get().Attribute_Meta_InComingXP,PayLoad);
+}
 
 void UAuraAttributeSet::OnRep_Strength(const FGameplayAttributeData& OldStrength) const
 {
@@ -266,3 +310,4 @@ void UAuraAttributeSet::SetProperties(const FGameplayEffectModCallbackData& Data
 			EffectProperties.SourceCharacter = Cast<ACharacter>(SourceActor);
 	}
 }
+

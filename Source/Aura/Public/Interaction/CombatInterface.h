@@ -10,6 +10,8 @@
 // This class does not need to be modified.
 
 
+class UNiagaraSystem;
+
 USTRUCT(BlueprintType)
 struct FMontageTag
 {
@@ -20,6 +22,9 @@ struct FMontageTag
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
 	FGameplayTag MontageTag;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
+	USoundBase* AttackSound;
 };
 
 UINTERFACE(MinimalAPI, BlueprintType)
@@ -59,6 +64,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
 	TArray<FMontageTag> GetMontageTags();
+
+	UFUNCTION(BlueprintNativeEvent,BlueprintCallable)
+	UNiagaraSystem* GetBloodEffect();
 
 	UFUNCTION()
 

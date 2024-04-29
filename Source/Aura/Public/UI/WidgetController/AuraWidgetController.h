@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "AttributeSet.h"
+#include "AbilitySystem/Data/AuraAtrributesDataAsset.h"
 #include "AuraWidgetController.generated.h"
 
 class UAbilitySystemComponent;
@@ -12,6 +13,8 @@ class UAttributeSet;
 /**
  * 
  */
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPointsChangedSignature,int,NewVal);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams

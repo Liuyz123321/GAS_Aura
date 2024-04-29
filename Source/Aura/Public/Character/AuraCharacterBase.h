@@ -8,6 +8,7 @@
 #include "Interaction/CombatInterface.h"
 #include "AuraCharacterBase.generated.h"
 
+class UNiagaraSystem;
 class UDamageTextComponent;
 class UAuraGameplayAbility;
 class UGameplayAbility;
@@ -49,6 +50,9 @@ public:
 	virtual bool IsDead_Implementation() override;
 
 	virtual AActor* GetAvatar_Implementation() override;
+
+	UNiagaraSystem* GetBloodEffect_Implementation() override;
+	
 
 	virtual void Die() override;
 
@@ -100,6 +104,15 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<UGameplayAbility>> StartUpAbilities;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<UGameplayAbility>> PassiveStartUpAbilities;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UNiagaraSystem* BloodEffect;
+
+	UPROPERTY(EditDefaultsOnly)
+	USoundBase* DeathSound;
 
 	bool bIsDead = false;
 	

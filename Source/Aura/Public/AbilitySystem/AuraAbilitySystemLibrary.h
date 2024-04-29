@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "AuraAbilitySystemLibrary.generated.h"
 
+class UAbilityInfo;
 class UAbilitySystemComponent;
 enum class ECharacterClass;
 class UMenuWidgetController;
@@ -18,8 +19,11 @@ class AURA_API UAuraAbilitySystemLibrary : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 public:
 	
-	UFUNCTION(BlueprintPure, Category= "AbilitySystem|WidgetController")
+	UFUNCTION(BlueprintPure, Category= "AbilitySystem|WidgetController",meta=(DefaultToSelf = "WorldContext"))
 	static UMenuWidgetController* GetAttributeMenuWidgetController(UObject* WorldContext);
+
+	UFUNCTION(BlueprintPure, Category= "AbilitySystem|WidgetController",meta=(DefaultToSelf = "WorldContext"))
+	static USpellMenuWidgetController* GetSpellMenuWidgetController(UObject* WorldContext);
 
 	static void InitializeDefaultAttributes(UObject* WorldContext,ECharacterClass CharacterClass,float level,UAbilitySystemComponent* ASC);
 
@@ -37,4 +41,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SetIsCriticalHit(bool IsCriticalHit, FGameplayEffectContextHandle& EffectContextHandle);
+
+	UFUNCTION(BlueprintCallable)
+	static UAbilityInfo* GetAbilityInfo(UObject* WorldContext);
 };

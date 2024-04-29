@@ -21,9 +21,6 @@ void UExecutionCal_Damage::Execute_Implementation(const FGameplayEffectCustomExe
 	const UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 
-	const AActor* SourceActor = SourceASC->GetAvatarActor();
-	const AActor* TargetActor = TargetASC->GetAvatarActor();
-
 	const FGameplayEffectSpec GameplayEffectSpec = ExecutionParams.GetOwningSpec();
 
 	const FGameplayTagContainer* SourceTags = GameplayEffectSpec.CapturedSourceTags.GetAggregatedTags();

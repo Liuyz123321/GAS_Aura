@@ -8,6 +8,7 @@
 #include "AbilitySystem/AuraAttributeSet.h"
 #include "Aura/Aura.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 AACharacter::AACharacter()
@@ -33,7 +34,7 @@ UAttributeSet* AACharacter::GetAtrribueSet()
 	return AttributeSet;
 }
 
-FVector AACharacter::GetWeaponTipSocketLocation_Implementation(const FGameplayTag& GameplayTag)
+FVector AACharacter::GetWeaponTipSocketLocation_Implementation(const FGameplayTag& GameplayTag) 
 {
 	const FAuraGameplayTags AuraGameplayTags = FAuraGameplayTags::Get();
 	if(GameplayTag.MatchesTagExact(AuraGameplayTags.Montage_Attack_Weapon) && IsValid(weapon))
@@ -75,6 +76,11 @@ AActor* AACharacter::GetAvatar_Implementation()
 	return this;
 }
 
+UNiagaraSystem* AACharacter::GetBloodEffect_Implementation()
+{
+	return BloodEffect;
+}
+
 void AACharacter::Die()
 {
 	// InRule（EDetachmentRule）：指定解除连接规则的枚举值。它定义了解除连接时对对象位置和旋转的处理方式。可能的枚举值包括
@@ -85,6 +91,8 @@ void AACharacter::Die()
 	// `SnapToTargetNotIncludingScale：对象将与目标位置和旋转对齐，但不考虑缩放。
 	// `SnapToTargetIncludingScale：对象将与目标位置、旋转和缩放对齐。
 	// bInCallModify（bool）：一个布尔值，指示是否调用修改函数。如果设置为 true，则会调用对象的 Modify() 函数，以确保解除连接操作的修改是可以撤销的。
+	UGameplayStatics::PlaySoundAtLocation(this,DeathSound,GetActorLocation(),GetActorRotation());
+	
 	weapon->DetachFromComponent(FDetachmentTransformRules(EDetachmentRule::KeepWorld,true));
 	weapon->SetSimulatePhysics(true);
 	weapon->SetEnableGravity(true);
@@ -131,7 +139,7 @@ void AACharacter::AddAbilities()
 	UAuraAbilitySystemComponent* ASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
 	if(!HasAuthority()) return;
 
-	ASC->AddAbilities(StartUpAbilities);
+	ASC->AddAbilities(StartUpAbilities, PassiveStartUpAbilities);
 }
 
 void AACharacter::Dissolve()

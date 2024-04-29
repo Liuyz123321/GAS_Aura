@@ -31,7 +31,9 @@ public:
  FGameplayTag Attribute_Secondary_ManaRegeneration;
  FGameplayTag Attribute_Secondary_MaxHealth;
  FGameplayTag Attribute_Secondary_MaxMana;
-
+ 
+ FGameplayTag Attribute_Meta_InComingXP;
+ 
  FGameplayTag Input_1;
  FGameplayTag Input_2;
  FGameplayTag Input_3;
@@ -43,6 +45,20 @@ public:
  FGameplayTag Effect_HitReact;
 
  FGameplayTag Ability_Attack;
+ 
+ FGameplayTag Abilities_Fire_FireBolt;
+ FGameplayTag Abilities_Thunder_1;
+ FGameplayTag Abilities_None;
+
+ FGameplayTag Abilities_Offensive;
+ FGameplayTag Abilities_Passive;
+
+ FGameplayTag Abilities_State_Unlock;
+ FGameplayTag Abilities_State_Lock;
+ FGameplayTag Abilities_State_Equipped;
+ FGameplayTag Abilities_State_Ready;
+ 
+ FGameplayTag CoolDown_Fire_FireBolt;
  
  FGameplayTag Montage_Attack_Weapon;
  FGameplayTag Montage_Attack_LeftHand;

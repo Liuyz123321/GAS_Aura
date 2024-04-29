@@ -12,7 +12,6 @@
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAttributesInfoSignature,FAuraAttributesInfo,Info);
 
-
 UCLASS(BlueprintType,Blueprintable)
 class AURA_API UMenuWidgetController : public UAuraWidgetController
 {
@@ -21,11 +20,18 @@ class AURA_API UMenuWidgetController : public UAuraWidgetController
 public:
 	UFUNCTION(BlueprintCallable)
 	virtual void BroadcastInitialValues() override;
+
+	UFUNCTION(BlueprintCallable)
+	void UpgradeAttribute(const FGameplayTag& Tag);
 	
 	virtual void BindCallbacksToDependencies() override;
 
 	UPROPERTY(BlueprintAssignable)
 	FAttributesInfoSignature AttributesInfo;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnPointsChangedSignature OnAttributePointsChangedDelegate;
+
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

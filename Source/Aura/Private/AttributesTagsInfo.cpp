@@ -23,6 +23,8 @@ void FAuraGameplayTags::InitNativeGameplayTags()
 	GameplayTags.Attribute_Primary_Resilience = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Primary.Resilience"),FString(""));
 	GameplayTags.Attribute_Primary_Vigor = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Primary.Vigor"),FString(""));
 	
+	GameplayTags.Attribute_Meta_InComingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Attribute.Meta.InComingXP"),FString(""));
+	
 	GameplayTags.Input_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.1"),FString(""));
 	GameplayTags.Input_2 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.2"),FString(""));
 	GameplayTags.Input_3 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Input.3"),FString(""));
@@ -34,6 +36,20 @@ void FAuraGameplayTags::InitNativeGameplayTags()
 	GameplayTags.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Effect.HitReact"),FString(""));
 	
 	GameplayTags.Ability_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Ability.Attack"),FString(""));
+	
+	GameplayTags.Abilities_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Fire.FireBolt"),FString(""));
+	GameplayTags.Abilities_Thunder_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Thunder.1"),FString(""));
+	GameplayTags.Abilities_None = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.None"),FString(""));
+
+	GameplayTags.Abilities_Passive = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Passive"),FString(""));
+	GameplayTags.Abilities_Offensive = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.Offensive"),FString(""));
+	
+	GameplayTags.Abilities_State_Equipped = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.State.Equipped"),FString(""));
+	GameplayTags.Abilities_State_Lock = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.State.Lock"),FString(""));
+	GameplayTags.Abilities_State_Ready = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.State.Ready"),FString(""));
+	GameplayTags.Abilities_State_Unlock = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Abilities.State.Unlock"),FString(""));
+	
+	GameplayTags.CoolDown_Fire_FireBolt = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("CoolDown.Fire.FireBolt"),FString(""));
 
 	GameplayTags.Montage_Attack_Weapon = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.Weapon"),FString(""));
 	GameplayTags.Montage_Attack_LeftHand = UGameplayTagsManager::Get().AddNativeGameplayTag(FName("Montage.Attack.LeftHand"),FString(""));

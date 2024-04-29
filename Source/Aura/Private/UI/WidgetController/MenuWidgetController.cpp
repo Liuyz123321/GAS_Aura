@@ -4,7 +4,9 @@
 #include "UI/WidgetController/MenuWidgetController.h"
 
 #include "AttributesTagsInfo.h"
+#include "AbilitySystem/AuraAbilitySystemComponent.h"
 #include "AbilitySystem/AuraAttributeSet.h"
+#include "Player/AuraPlayerState.h"
 
 void UMenuWidgetController::BroadcastInitialValues()
 {
@@ -22,14 +24,33 @@ void UMenuWidgetController::BroadcastInitialValues()
 	}
 	
 	BindCallbacksToDependencies();
+	
+}
+
+void UMenuWidgetController::UpgradeAttribute(const FGameplayTag& Tag)
+{
+	UAuraAbilitySystemComponent* ASC = Cast<UAuraAbilitySystemComponent>(AbilitySystemComponent);
+	if(ASC)
+	{
+		ASC -> UpgradeAttribute(Tag);
+	}
 }
 
 void UMenuWidgetController::BindCallbacksToDependencies()
 {
+	
 	const UAuraAttributeSet *as = CastChecked<UAuraAttributeSet>(AttributeSet);
 	check(AuraAttributeDA);
 	check(AbilitySystemComponent);
-
+	
+	AAuraPlayerState* AuraPlayerState = Cast<AAuraPlayerState>(PlayerState);
+	
+	AuraPlayerState->OnAttributePointsChangeDelegate.AddLambda([this](int NewPoints)
+	{
+		OnAttributePointsChangedDelegate.Broadcast(NewPoints);
+	});
+	
+	
 	for(auto info:as->AttributesToFunc)
 	{
 		
@@ -40,7 +61,6 @@ void UMenuWidgetController::BindCallbacksToDependencies()
 				FAuraAttributesInfo AuraAttributesInfo = AuraAttributeDA->FindAttributeByTag(GameplayTag,true);
 				AuraAttributesInfo.AttributeVal = info.Value().GetNumericValue(as);
 				AttributesInfo.Broadcast(AuraAttributesInfo);
-			}
-			);
+			});
 	}
 }

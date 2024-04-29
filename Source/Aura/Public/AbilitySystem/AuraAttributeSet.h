@@ -109,6 +109,8 @@ public:
 	//Meta Attributes
 	UPROPERTY(BlueprintReadOnly, Category="Meta Attribute")
 	FGameplayAttributeData Damage;
+	UPROPERTY(BlueprintReadOnly, Category="Meta Attribute")
+	FGameplayAttributeData InComingXP;
 	
 	
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Health)
@@ -131,6 +133,7 @@ public:
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,MaxMana)
 
 	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,Damage)
+	ATTRIBUTE_ACCESSORS(UAuraAttributeSet,InComingXP)
 
 	UFUNCTION()
 	void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;
@@ -169,4 +172,6 @@ public:
 
 private:
 	void SetProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& EffectProperties) const;
+	
+	void SendGainXPEvent(const FEffectProperties& EffectProperties);
 };

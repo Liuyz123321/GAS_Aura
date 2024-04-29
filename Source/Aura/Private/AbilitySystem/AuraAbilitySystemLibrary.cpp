@@ -21,12 +21,32 @@ UMenuWidgetController* UAuraAbilitySystemLibrary::GetAttributeMenuWidgetControll
 		{
 			AAuraPlayerState* PS = PC->GetPlayerState<AAuraPlayerState>();
 			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
-			UAttributeSet* AS = PS->GetAttribueSet();
+			UAttributeSet* AS = PS->GetAttributeSet();
 
 			const FWidgetControllerParams WidgetControllerParams(PC,PS,AS,ASC);
 			UMenuWidgetController* MenuWidgetController = AuraHUD->GetMenuWidgetController(WidgetControllerParams);
 			
 			return MenuWidgetController;
+		}
+	}
+
+	return nullptr;
+}
+
+USpellMenuWidgetController* UAuraAbilitySystemLibrary::GetSpellMenuWidgetController(UObject* WorldContext)
+{
+	if(APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(WorldContext,0)))
+	{
+		if(AAuraHUD* AuraHUD = Cast<AAuraHUD>(PC->GetHUD()))
+		{
+			AAuraPlayerState* PS = PC->GetPlayerState<AAuraPlayerState>();
+			UAbilitySystemComponent* ASC = PS->GetAbilitySystemComponent();
+			UAttributeSet* AS = PS->GetAttributeSet();
+
+			const FWidgetControllerParams WidgetControllerParams(PC,PS,AS,ASC);
+			USpellMenuWidgetController* SpellMenuWidgetController = AuraHUD->GetSpellMenuWidgetController(WidgetControllerParams);
+			
+			return SpellMenuWidgetController;
 		}
 	}
 
@@ -106,4 +126,15 @@ void UAuraAbilitySystemLibrary::SetIsCriticalHit(bool IsCriticalHit, FGameplayEf
 	{
 		AuraGameplayEffectContext->SetIsCriticalHit(IsCriticalHit);
 	}
+}
+
+UAbilityInfo* UAuraAbilitySystemLibrary::GetAbilityInfo(UObject* WorldContext)
+{
+	if(APlayerController* PC = Cast<APlayerController>(UGameplayStatics::GetPlayerController(WorldContext,0)))
+	{
+		AAuraPlayerState* PS = PC->GetPlayerState<AAuraPlayerState>();
+		return PS->AbilityInfo;
+	}
+
+	return nullptr;
 }
