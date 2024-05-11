@@ -25,7 +25,7 @@ struct FAbilityDefaultInfo
 	UPROPERTY(BlueprintReadOnly)
 	FGameplayTag InputTag = FGameplayTag();
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(EditAnywhere,BlueprintReadOnly)
 	FGameplayTag AbilityType = FGameplayTag();
 
 	UPROPERTY(EditAnywhere,BlueprintReadOnly)

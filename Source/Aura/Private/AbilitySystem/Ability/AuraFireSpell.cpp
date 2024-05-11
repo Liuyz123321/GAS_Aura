@@ -7,7 +7,9 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/Tasks/GetMouseData.h"
 #include "AttributesTagsInfo.h"
+#include "AbilitySystem/AuraAbilitySystemLibrary.h"
 #include "Actor/AuraProjectile.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "Interaction/CombatInterface.h"
 
 void UAuraFireSpell::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -54,5 +56,66 @@ void UAuraFireSpell::SpawnProjectile(const FVector& MouseLocation, const FGamepl
 		}
 		
 		Projectile->FinishSpawning(Transform);
+	}
+}
+
+void UAuraFireSpell::SpawnProjectiles(const FVector& ProjectileTargetLocation, const FGameplayTag& SocketTag, bool bOverridePitch, float PitchOverride, AActor* HomingTarget)
+{
+	const bool bIsServer = GetAvatarActorFromActorInfo()->HasAuthority();
+	if (!bIsServer) return;
+
+	const FVector SocketLocation = ICombatInterface::Execute_GetWeaponTipSocketLocation(
+		GetAvatarActorFromActorInfo(),
+		SocketTag);
+	FRotator Rotation = (ProjectileTargetLocation - SocketLocation).Rotation();
+	if (bOverridePitch) Rotation.Pitch = PitchOverride;
+	
+	const FVector Forward = Rotation.Vector();
+	const int32 EffectiveNumProjectiles = NumProjectiles;
+	TArray<FRotator> Rotations = UAuraAbilitySystemLibrary::EvenlySpacedRotators(Forward, FVector::UpVector, ProjectileSpread, EffectiveNumProjectiles);
+
+	for (const FRotator& Rot : Rotations)
+	{
+		FTransform SpawnTransform;
+		SpawnTransform.SetLocation(SocketLocation);
+		SpawnTransform.SetRotation(Rot.Quaternion());
+
+		AAuraProjectile* Projectile = GetWorld()->SpawnActorDeferred<AAuraProjectile>(
+		ProjectileClass,
+		SpawnTransform,
+		GetOwningActorFromActorInfo(),
+		Cast<APawn>(GetOwningActorFromActorInfo()),
+		ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+
+		Projectile->SetSpawnActor(GetAvatarActorFromActorInfo());
+		
+		if(UAbilitySystemComponent* AbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetAvatarActorFromActorInfo()))
+		{
+			FGameplayEffectContextHandle GameplayEffectContextHandle = AbilitySystemComponent->MakeEffectContext();
+			GameplayEffectContextHandle.AddSourceObject(GetAvatarActorFromActorInfo());
+			
+			const FGameplayEffectSpecHandle GameplayEffectSpecHandle =
+				AbilitySystemComponent->MakeOutgoingSpec(DamageEffect,GetAbilityLevel(),GameplayEffectContextHandle);
+			
+			Projectile->GameplayEffectSpecHandle = GameplayEffectSpecHandle;
+			const FAuraGameplayTags GameplayTags = FAuraGameplayTags::Get();
+			UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(GameplayEffectSpecHandle,GameplayTags.Damage,DamageNumber);
+		}
+		
+		
+		if (HomingTarget && HomingTarget->Implements<UCombatInterface>())
+		{
+			Projectile->ProjectileMovementComponent->HomingTargetComponent = HomingTarget->GetRootComponent();
+		}
+		else
+		{
+			Projectile->HomingTargetSceneComponent = NewObject<USceneComponent>(USceneComponent::StaticClass());
+			Projectile->HomingTargetSceneComponent->SetWorldLocation(ProjectileTargetLocation);
+			Projectile->ProjectileMovementComponent->HomingTargetComponent = Projectile->HomingTargetSceneComponent;
+		}
+		Projectile->ProjectileMovementComponent->HomingAccelerationMagnitude = FMath::FRandRange(HomingAccelerationMin, HomingAccelerationMax);
+		Projectile->ProjectileMovementComponent->bIsHomingProjectile = bLaunchHomingProjectiles;
+		
+		Projectile->FinishSpawning(SpawnTransform);
 	}
 }

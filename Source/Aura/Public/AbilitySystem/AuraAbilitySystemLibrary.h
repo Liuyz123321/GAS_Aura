@@ -44,4 +44,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static UAbilityInfo* GetAbilityInfo(UObject* WorldContext);
+
+	UFUNCTION(BlueprintPure, Category = "AuraAbilitySystemLibrary|GameplayMechanics")
+	static TArray<FRotator> EvenlySpacedRotators(const FVector& Forward, const FVector& Axis, float Spread, int32 NumRotators);
 };

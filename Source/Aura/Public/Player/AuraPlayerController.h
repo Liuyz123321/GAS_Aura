@@ -51,19 +51,28 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> MoveAction;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> MMBAction;
 	
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<UInputAction> ShiftAction;
+
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<UInputAction> MoveViewAction;
 	
 	void Move(const FInputActionValue& InputActionValue);
+	void MoveView(const FInputActionValue& InputActionValue);
 
 	void AbilityInputTagPressed(FGameplayTag Tag);
 	void AbilityInputTagReleased(FGameplayTag Tag);
 	void AbilityInputTagHeld(FGameplayTag Tag);
 
 	bool bShiftIsPressed = false;
+
 	void ShiftInputPressed(){bShiftIsPressed = true;}
 	void ShiftInputReleased(){bShiftIsPressed = false;}
+	
 
 	IEnemyInterface *lastCursor;
 	IEnemyInterface *thisCursor;

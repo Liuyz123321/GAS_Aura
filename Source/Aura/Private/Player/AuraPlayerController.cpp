@@ -11,6 +11,7 @@
 #include "NavigationSystem.h"
 #include "GameFramework/Character.h"
 #include "AbilitySystem/AuraAbilitySystemComponent.h"
+#include "Character/AuraCharacter.h"
 #include "Components/SplineComponent.h"
 #include "Input/AuraInputComponent.h"
 #include "Interaction/EnemyInterface.h"
@@ -39,7 +40,7 @@ void AAuraPlayerController::CursorTrace()
 	if(!CursorRes.bBlockingHit) return;
 
 	lastCursor = thisCursor;
-	thisCursor = Cast<IEnemyInterface>(CursorRes.GetActor());
+	thisCursor = Cast<IEnemyInterface>(CursorRes.GetActor()); 
  
 	if(thisCursor != nullptr)
 	{
@@ -100,8 +101,10 @@ void AAuraPlayerController::SetupInputComponent()
 
 	UAuraInputComponent *AuraInputComponent = CastChecked<UAuraInputComponent>(InputComponent);
 	AuraInputComponent->BindAction(MoveAction,ETriggerEvent::Triggered,this,&AAuraPlayerController::Move);
+	AuraInputComponent->BindAction(MoveViewAction,ETriggerEvent::Triggered,this,&AAuraPlayerController::MoveView);
 	AuraInputComponent->BindAction(ShiftAction,ETriggerEvent::Started,this,&AAuraPlayerController::ShiftInputPressed);
 	AuraInputComponent->BindAction(ShiftAction,ETriggerEvent::Completed,this,&AAuraPlayerController::ShiftInputReleased);
+	
 	//模板参数UserClass、PressedFuncType、ReleasedFuncType和HeldFuncType根据传递给函数的参数自动推断出来。 &ThisClass::AbilityInputTagHeld 是函数指针
 	AuraInputComponent->BindInputActions(AuraInputConfig,this,&ThisClass::AbilityInputTagPressed,&ThisClass::AbilityInputTagReleased,&ThisClass::AbilityInputTagHeld);
 }
@@ -224,4 +227,15 @@ void AAuraPlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledAPawn->AddMovementInput(RightDirection,InputAxisVector2D.X);
 	}
 		
+}
+
+void AAuraPlayerController::MoveView(const FInputActionValue& InputActionValue)
+{
+	const FVector2D InputAxisVector2D = InputActionValue.Get<FVector2D>();
+
+	if(APawn *ControlledAPawn = GetPawn())
+	{
+		ControlledAPawn->AddControllerPitchInput(InputAxisVector2D.Y);
+		ControlledAPawn->AddControllerYawInput(InputAxisVector2D.X);
+	}
 }

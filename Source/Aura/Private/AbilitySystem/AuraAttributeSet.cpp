@@ -184,7 +184,7 @@ void UAuraAttributeSet::SendGainXPEvent(const FEffectProperties& EffectPropertie
 {
 	FGameplayEventData PayLoad;
 	PayLoad.EventTag = FAuraGameplayTags::Get().Attribute_Meta_InComingXP;
-	PayLoad.EventMagnitude = 100;
+	PayLoad.EventMagnitude = 300;
 	
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(EffectProperties.SourceAvatarActor,FAuraGameplayTags::Get().Attribute_Meta_InComingXP,PayLoad);
 }

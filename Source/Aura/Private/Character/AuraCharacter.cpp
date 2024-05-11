@@ -12,6 +12,7 @@
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 #include "AbilitySystem/Data/LevelUpInfo.h"
+#include "GameFramework/SpringArmComponent.h"
 
 
 AAuraCharacter::AAuraCharacter()
@@ -26,6 +27,11 @@ AAuraCharacter::AAuraCharacter()
 	LevelUpNiagara = CreateDefaultSubobject<UNiagaraComponent>("LevelUpNiagara");
 	LevelUpNiagara->SetupAttachment(GetRootComponent());
 	LevelUpNiagara->bAutoActivate = false;
+
+	SpringArmComponent = CreateDefaultSubobject<USpringArmComponent>("SpringArm");
+	SpringArmComponent->SetupAttachment(GetRootComponent());
+
+	SpringArmComponent->TargetArmLength = 750.f;
 
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationRoll = false; 
@@ -147,12 +153,6 @@ bool AAuraCharacter::IsNoAttributePoints_Implementation()
 	return AuraPlayerState->GetAttributePoints() == 0;
 }
 
-// FLevelUpDetailedInfo AAuraCharacter::GetLevelUpInfoForXP_Implementation(int32 InXP)
-// {
-// 	const AAuraPlayerState* AuraPlayerState = GetPlayerState<AAuraPlayerState>();
-// 	check(AuraPlayerState);
-// 	return AuraPlayerState->LevelUpInfo->FindLevelUpInfoForXP(InXP);
-// }
 
 void AAuraCharacter::PossessedBy(AController* NewController)
 {

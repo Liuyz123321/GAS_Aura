@@ -40,6 +40,7 @@ public:
  FGameplayTag Input_4;
  FGameplayTag Input_LMB;
  FGameplayTag Input_RMB;
+ FGameplayTag Input_MMB;
 
  FGameplayTag Damage;
  FGameplayTag Effect_HitReact;
@@ -47,6 +48,7 @@ public:
  FGameplayTag Ability_Attack;
  
  FGameplayTag Abilities_Fire_FireBolt;
+ FGameplayTag Abilities_Fire_FireBolts;
  FGameplayTag Abilities_Thunder_1;
  FGameplayTag Abilities_None;
 

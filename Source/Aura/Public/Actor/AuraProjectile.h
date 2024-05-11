@@ -25,6 +25,9 @@ public:
 	UPROPERTY(BlueprintReadWrite, meta=(ExposeOnSpawn = true))
 	FGameplayEffectSpecHandle GameplayEffectSpecHandle;
 
+	UPROPERTY()
+	TObjectPtr<USceneComponent> HomingTargetSceneComponent;
+
 	void SetSpawnActor(AActor* Actor);
 
 	AActor* GetSpawnActor() const;
